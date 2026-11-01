@@ -17,9 +17,9 @@
   --cds-font-size-caption: 12px; --cds-font-size-body: 14px; --cds-font-size-heading: 18px; --cds-font-size-title: 24px;
 }
 [hidden] { display: none !important; }
-html, body { margin: 0; background: #F7F5F0; color: #1B2430; font-family: var(--font-anthropic-sans); }
+html, body { margin: 0; background: #F4F3F0; color: #253A50; font-family: var(--font-anthropic-sans); }
 #dash-root { max-width: 1280px; margin: 0 auto; padding: 16px; box-sizing: border-box; }
-.site-updated { max-width: 1280px; margin: 0 auto; padding: 8px 16px 24px; font-size: 12px; color: #5D6673; box-sizing: border-box; }
+.site-updated { max-width: 1280px; margin: 0 auto; padding: 8px 16px 24px; font-size: 12px; color: #56677A; box-sizing: border-box; }
 </style>
 <script src="vendor/d3.min.js"></script>
 <script>
@@ -61,26 +61,30 @@ html, body { margin: 0; background: #F7F5F0; color: #1B2430; font-family: var(--
 <body>
 <div id="dash-root">
 <style>
-/* Neutral look matching the Texas tracker: stone page, Democratic blue, Republican red. One light look in every theme. */
+/* Engage Y'all brand: navy #253A50, slate blue #829EB5, cream #F4F3F0, rust #93513E. Party colors stay blue and red for results. One light look in every theme. */
 #dash-root { --dash-gutter: 0; }
 .ey { color-scheme: light;
-  --ey-page: #F7F5F0; --ey-ink: #1B2430; --ey-d: #1F5FBF; --ey-r: #C0352B; --ey-o: #7A6F5A;
-  --ey-surface: #FFFFFF; --ey-track: #E7E2D6; --ey-d-tint: #DCE7F7; --ey-r-tint: #F6DDDA;
-  --color-fg: #1B2430; --color-fg-muted: #5D6673; --color-panel: #FFFFFF; --color-border-line: #E2DDD0; --color-warn: #9A5B00; --color-bg: #F7F5F0;
+  --ey-navy: #253A50; --ey-slate: #829EB5; --ey-cream: #F4F3F0; --ey-rust: #93513E;
+  --ey-page: #F4F3F0; --ey-ink: #253A50; --ey-d: #2A5FA8; --ey-r: #B5342B; --ey-o: #6E7F8F;
+  --ey-surface: #FFFFFF; --ey-track: #DCE3EA; --ey-d-tint: #DFE8F4; --ey-r-tint: #F5DEDA;
+  --color-fg: #253A50; --color-fg-muted: #56677A; --color-panel: #FFFFFF; --color-border-line: #D3DCE4; --color-warn: #93513E; --color-bg: #F4F3F0;
   background: var(--ey-page); color: var(--ey-ink);
-  padding-block: var(--cds-pad-lg) var(--cds-pad-xl);
+  padding-block: 0 var(--cds-pad-xl);
   padding-left: max(16px, 3vw); padding-right: max(16px, 3vw);
   font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-xl); min-height: 100%; }
-.ey-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-xs) var(--cds-gap-lg); }
-.ey-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
-.ey-head .meta { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.ey-take { margin: 0; font-size: var(--cds-font-size-body); max-width: 72ch; }
+.ey-bleed { margin-inline: calc(-1 * max(16px, 3vw)); padding-inline: max(16px, 3vw); }
+.ey-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-xs) var(--cds-gap-lg); background: var(--ey-navy); color: var(--ey-cream); padding-block: 18px 16px; border-bottom: 4px solid var(--ey-cream); }
+.ey-head h1 { font-family: var(--font-anthropic-serif); font-weight: 700; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; color: var(--ey-cream); letter-spacing: -0.01em; }
+.ey-head h1 span { color: var(--ey-slate); font-weight: 400; }
+.ey-head .meta { color: #C9D5DF; font-size: var(--cds-font-size-caption); }
+.ey-hero { background: var(--ey-slate); padding-block: 14px; margin-top: calc(-1 * var(--cds-gap-md)); }
+.ey-take { margin: 0; font-size: var(--cds-font-size-body); max-width: 72ch; color: var(--ey-navy); font-style: italic; }
 .ey-counts { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 .ey-counts b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); color: var(--color-fg); font-variant-numeric: tabular-nums; margin-right: 0.3rem; }
 .ey-counts .d b { color: var(--ey-d); }
 .ey-counts .r b { color: var(--ey-r); }
 .ey-sec { display: grid; gap: var(--cds-gap-md); }
-.ey-sec > h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.ey-sec > h2 { margin: 0; font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-weight: 700; color: var(--ey-navy); }
 .ey-sec > p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 80ch; }
 
 .ey-page { display: grid; gap: var(--cds-gap-xl); }
@@ -88,9 +92,9 @@ html, body { margin: 0; background: #F7F5F0; color: #1B2430; font-family: var(--
 /* States */
 .ey-states { display: grid; gap: var(--cds-gap-xl); }
 .ey-state { display: grid; gap: var(--cds-gap-sm); }
-.ey-state > h3 { margin: 0; display: flex; align-items: baseline; gap: var(--cds-gap-sm); font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); border-bottom: 1px solid var(--color-border-line); padding-bottom: 0.2rem; }
+.ey-state > h3 { margin: 0; display: flex; align-items: baseline; gap: var(--cds-gap-sm); font-family: var(--font-anthropic-serif); font-weight: 700; font-size: var(--cds-font-size-heading); color: var(--ey-navy); border-bottom: 2px solid var(--ey-rust); padding-bottom: 0.2rem; }
 .ey-state > h3 small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.ey-level { margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.ey-level { margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-caption); color: var(--ey-rust); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
 .ey-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-sm); }
 
 /* Race tile */
@@ -119,23 +123,23 @@ html, body { margin: 0; background: #F7F5F0; color: #1B2430; font-family: var(--
 .ey-foot { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
 .ey-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .ey-left { margin: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
-a.ey-link { color: #0645AD; text-decoration: underline; text-underline-offset: 2px; }
+a.ey-link { color: var(--ey-navy); text-decoration: underline; text-underline-offset: 2px; }
 a.ey-link:hover { text-decoration-thickness: 2px; }
 
 /* Tables */
 .ey-card { background: var(--ey-surface); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); }
 .ey-scroll { overflow-x: auto; }
 .ey-tbl { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
-.ey-tbl th { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.ey-tbl th { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--ey-cream); background: var(--ey-navy); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
 .ey-tbl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
 .ey-tbl tr:last-child td { border-bottom: 0; }
-.ey-tbl tr.st-first td { border-top: 2px solid var(--color-fg-muted); }
+.ey-tbl tr.st-first td { border-top: 2px solid var(--ey-slate); }
 .ey-tbl .r { text-align: right; }
 .ey-tbl td.race { font-weight: 600; white-space: nowrap; }
 .ey-tbl td.o { color: var(--ey-d); }
 .ey-tbl td.g { color: var(--ey-r); }
 .ey-tbl td.muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.ey-tbl a { color: #0645AD; }
+.ey-tbl a { color: var(--ey-navy); }
 .ey-pill { display: inline-block; font-size: var(--cds-font-size-caption); padding: 0.05rem 0.5rem; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
 .ey-pill.counting, .ey-pill.runoff { color: var(--color-warn); border-color: currentColor; }
 .ey-pill.won { color: var(--ey-d); border-color: currentColor; font-weight: 600; }
@@ -154,11 +158,11 @@ a.ey-link:hover { text-decoration-thickness: 2px; }
 
   <div class="ey-page" id="results-page">
     <header class="ey-sec" id="summary">
-      <div class="ey-head">
-        <h1>Engage Y'all Election Night Tracker</h1>
+      <div class="ey-head ey-bleed">
+        <h1>engage y'all <span>election night tracker</span></h1>
         <span class="meta dash-skeleton" data-source="summary" data-field="last_update" data-row="0">–</span>
       </div>
-      <p class="ey-take dash-skeleton" data-source="summary" data-field="headline" data-row="0">–</p>
+      <div class="ey-hero ey-bleed"><p class="ey-take dash-skeleton" data-source="summary" data-field="headline" data-row="0">–</p></div>
       <div class="ey-counts">
         <span class="d"><b data-source="summary" data-field="leading_ours" data-row="0">–</b>we lead</span>
         <span class="r"><b data-source="summary" data-field="leading_opp" data-row="0">–</b>GOP leads</span>
