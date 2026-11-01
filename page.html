@@ -28,6 +28,12 @@
 .ey-page { display: grid; gap: var(--cds-gap-xl); }
 
 /* States */
+.ey-tabs { display: flex; flex-wrap: nowrap; gap: 0; border-bottom: 2px solid var(--ey-navy); margin-top: var(--cds-gap-md); }
+@media (max-width: 30rem) { .ey-tabs button { font-size: var(--cds-font-size-body); margin-right: 0.75rem; padding-right: 0.25rem; } }
+.ey-tabs button { font: inherit; font-family: var(--font-anthropic-serif); font-weight: 700; font-size: var(--cds-font-size-heading); color: var(--ey-slate); background: transparent; border: 0; border-bottom: 4px solid transparent; margin-bottom: -2px; padding: 0.35rem 1rem 0.3rem 0; margin-right: 1.25rem; cursor: pointer; white-space: nowrap; }
+.ey-tabs button small { font-family: var(--font-anthropic-sans); font-weight: 400; font-size: var(--cds-font-size-caption); margin-left: 0.35rem; color: var(--color-fg-muted); }
+.ey-tabs button[aria-selected=true] { color: var(--ey-navy); border-bottom-color: var(--ey-rust); }
+.ey-tabs button:focus-visible { outline: 2px solid var(--ey-rust); outline-offset: 2px; }
 .ey-states { display: grid; gap: var(--cds-gap-xl); }
 .ey-state { display: grid; gap: var(--cds-gap-sm); }
 .ey-state > h3 { margin: 0; display: flex; align-items: baseline; gap: var(--cds-gap-sm); font-family: var(--font-anthropic-serif); font-weight: 700; font-size: var(--cds-font-size-heading); color: var(--ey-navy); border-bottom: 2px solid var(--ey-rust); padding-bottom: 0.2rem; }
@@ -111,13 +117,17 @@ a.ey-link:hover { text-decoration-thickness: 2px; }
       </div>
     </header>
 
+    <nav class="ey-tabs" role="tablist" aria-label="Race groups">
+      <button type="button" role="tab" id="tab-florida" data-tab="florida" aria-selected="true">Florida<small id="tab-florida-n"></small></button>
+      <button type="button" role="tab" id="tab-other" data-tab="other" aria-selected="false">Other states<small id="tab-other-n"></small></button>
+    </nav>
+
     <section class="ey-sec" id="by-state">
-      <h2>Races by state</h2>
       <div class="ey-states" id="states" data-source="races remaining"></div>
     </section>
 
     <section class="ey-sec" id="results">
-      <h2>Every race</h2>
+      <h2 id="table-title">Every Florida race</h2>
       <p>"Left to count" is the official estimate where a state or county publishes one, otherwise worked out from the share of expected vote counted. "Ours needs" is the share of the remaining two-way vote our endorsee needs to finish ahead.</p>
       <div class="ey-card ey-scroll">
         <table class="ey-tbl" id="results-table" data-source="races" data-row-key="race">
@@ -261,10 +271,25 @@ dash.calc('summary', {
   };
 
   const statesEl = document.getElementById('states');
+  const tabBtns = document.querySelectorAll('.ey-tabs button');
+  const fromHash = () => (location.hash === '#other' ? 'other' : location.hash === '#florida' ? 'florida' : null);
+  let tab = fromHash();
+  if (!tab) { try { tab = localStorage.getItem('ey-tab'); } catch (e) {} }
+  if (tab !== 'other') tab = 'florida';
+  const inTab = (r) => (tab === 'florida' ? r.state === 'FL' : r.state !== 'FL');
+  let render = () => {};
+  const setTab = (t) => {
+    tab = t;
+    try { localStorage.setItem('ey-tab', t); } catch (e) {}
+    tabBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+    document.getElementById('table-title').textContent = t === 'florida' ? 'Every Florida race' : 'Every race outside Florida';
+    render();
+  };
+  tabBtns.forEach((b) => b.addEventListener('click', () => { setTab(b.dataset.tab); try { history.replaceState(null, '', '#' + b.dataset.tab); } catch (e) {} }));
   const tbody = document.querySelector('#results-table tbody');
   const sumEls = document.querySelectorAll('[data-source="summary"]');
 
-  dash.onData(() => {
+  render = () => {
     const s = dash.data('summary');
     sumEls.forEach((e) => {
       if (s.status === 'ok' && s.data[0]) { e.classList.remove('dash-skeleton'); const v = s.data[0][e.dataset.field]; e.textContent = e.dataset.field === 'last_update' ? when(v) : String(v); }
@@ -278,9 +303,26 @@ dash.calc('summary', {
       statesEl.replaceChildren(); tbody.replaceChildren();
       if (d.status === 'error') statesEl.replaceChildren(el('div', 'ey-fail', 'Failed to load'));
     } else {
-      const rows = d.data.slice().sort((a, b) => Number(a.order) - Number(b.order));
+      const all = d.data.slice().sort((a, b) => Number(a.order) - Number(b.order));
+      const nFl = all.filter((r) => r.state === 'FL').length;
+      document.getElementById('tab-florida-n').textContent = nFl + ' races';
+      document.getElementById('tab-other-n').textContent = (all.length - nFl) + ' races';
+      const rows = all.filter(inTab);
       const codes = [...new Set(rows.map((r) => r.state))].sort();
-      statesEl.replaceChildren(...codes.map((code) => {
+      if (tab === 'florida') {
+        statesEl.replaceChildren(...LEVELS.map((lv) => {
+          const lrows = rows.filter((r) => r.level === lv);
+          if (!lrows.length) return null;
+          const sec = el('section', 'ey-state');
+          sec.id = 'fl-' + lv.toLowerCase().replace(/\s+/g, '-');
+          const h = el('h3', null, lv === 'Local' ? 'Local' : lv === 'Congress' ? 'U.S. House' : 'Florida ' + lv);
+          h.append(el('small', null, lrows.length + (lrows.length === 1 ? ' race' : ' races')));
+          const g = el('div', 'ey-grid');
+          g.append(...lrows.map((r) => tile(r, remBy.get(r.race))));
+          sec.append(h, g);
+          return sec;
+        }).filter(Boolean));
+      } else statesEl.replaceChildren(...codes.map((code) => {
         const sec = el('section', 'ey-state');
         sec.id = 'state-' + code;
         const srows = rows.filter((r) => r.state === code);
@@ -301,8 +343,9 @@ dash.calc('summary', {
       tbody.replaceChildren(...rows.map((r) => {
         const m = remBy.get(r.race);
         const tr = el('tr');
-        if (prev !== null && r.state !== prev) tr.classList.add('st-first');
-        prev = r.state;
+        const grp = tab === 'florida' ? r.level : r.state;
+        if (prev !== null && grp !== prev) tr.classList.add('st-first');
+        prev = grp;
         const st = el('td'); st.append(el('span', 'ey-pill ' + state(r), pillText(r)));
         tr.append(
           el('td', 'race', r.race),
@@ -322,15 +365,27 @@ dash.calc('summary', {
         return tr;
       }));
     }
-  });
+  };
+  dash.onData(render);
+  setTab(tab);
 
+  const goHash = () => {
+    const h = location.hash.slice(1);
+    if (h === 'florida' || h === 'other') { if (h !== tab) setTab(h); return; }
+    if (h.startsWith('race-') || h.startsWith('state-')) {
+      const r = dash.data('races').data.find((x) => 'race-' + x.race.replace(/[^A-Za-z0-9]+/g, '-') === h);
+      const want = h === 'state-FL' || (r && r.state === 'FL') ? 'florida' : (h.startsWith('state-') || r) ? 'other' : tab;
+      if (want !== tab) setTab(want);
+    }
+    const named = document.getElementById(h);
+    if (named) named.scrollIntoView();
+  };
+  window.addEventListener('hashchange', () => { if (dash.data('races').status === 'ok') goHash(); });
   let jumped = false;
   dash.onData(() => {
     if (jumped || dash.data('races').status !== 'ok') return;
     jumped = true;
-    const h = location.hash.slice(1);
-    const named = document.getElementById(h);
-    if (named) named.scrollIntoView();
+    goHash();
   });
 })();
 </script>
