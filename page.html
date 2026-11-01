@@ -1,0 +1,332 @@
+<style>
+/* Neutral look matching the Texas tracker: stone page, Democratic blue, Republican red. One light look in every theme. */
+#dash-root { --dash-gutter: 0; }
+.ey { color-scheme: light;
+  --ey-page: #F7F5F0; --ey-ink: #1B2430; --ey-d: #1F5FBF; --ey-r: #C0352B; --ey-o: #7A6F5A;
+  --ey-surface: #FFFFFF; --ey-track: #E7E2D6; --ey-d-tint: #DCE7F7; --ey-r-tint: #F6DDDA;
+  --color-fg: #1B2430; --color-fg-muted: #5D6673; --color-panel: #FFFFFF; --color-border-line: #E2DDD0; --color-warn: #9A5B00; --color-bg: #F7F5F0;
+  background: var(--ey-page); color: var(--ey-ink);
+  padding-block: var(--cds-pad-lg) var(--cds-pad-xl);
+  padding-left: max(16px, 3vw); padding-right: max(16px, 3vw);
+  font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-xl); min-height: 100%; }
+.ey-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-xs) var(--cds-gap-lg); }
+.ey-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+.ey-head .meta { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.ey-take { margin: 0; font-size: var(--cds-font-size-body); max-width: 72ch; }
+.ey-counts { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ey-counts b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); color: var(--color-fg); font-variant-numeric: tabular-nums; margin-right: 0.3rem; }
+.ey-counts .d b { color: var(--ey-d); }
+.ey-counts .r b { color: var(--ey-r); }
+.ey-sec { display: grid; gap: var(--cds-gap-md); }
+.ey-sec > h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.ey-sec > p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 80ch; }
+
+.ey-page { display: grid; gap: var(--cds-gap-xl); }
+
+/* States */
+.ey-states { display: grid; gap: var(--cds-gap-xl); }
+.ey-state { display: grid; gap: var(--cds-gap-sm); }
+.ey-state > h3 { margin: 0; display: flex; align-items: baseline; gap: var(--cds-gap-sm); font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); border-bottom: 1px solid var(--color-border-line); padding-bottom: 0.2rem; }
+.ey-state > h3 small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ey-level { margin: var(--cds-gap-xs) 0 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.ey-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-sm); }
+
+/* Race tile */
+.ey-t { background: var(--ey-surface); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); display: grid; gap: 0.35rem; min-width: 0; align-content: start; }
+.ey-t.won { background: var(--ey-d-tint); border-color: var(--ey-d); }
+.ey-t.lost { background: var(--ey-r-tint); border-color: var(--ey-r); }
+.ey-t .row1 { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-xs); min-width: 0; }
+.ey-t .race { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.ey-t .st { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); white-space: nowrap; }
+.ey-t .st.counting, .ey-t .st.runoff { color: var(--color-warn); }
+.ey-t .st.won { color: var(--ey-d); font-weight: 600; }
+.ey-t .st.lost { color: var(--ey-r); font-weight: 600; }
+.ey-cand { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--cds-gap-sm); }
+.ey-cand .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ey-cand .nm small { color: var(--color-fg-muted); }
+.ey-cand .pct { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; text-align: right; line-height: 1.1; }
+.ey-cand.ours .pct { color: var(--ey-d); }
+.ey-cand.opp .pct { color: var(--ey-r); }
+.ey-cand.opp.np .pct { color: var(--ey-o); }
+.ey-cand .votes { grid-column: 1 / 3; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.ey-bar { display: flex; height: 0.45rem; border-radius: 999px; overflow: hidden; background: var(--ey-track); }
+.ey-bar span { display: block; height: 100%; }
+.ey-bar .o { background: var(--ey-d); }
+.ey-bar .g { background: var(--ey-r); margin-left: auto; }
+.ey-bar.np .g { background: var(--ey-o); }
+.ey-foot { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.ey-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.ey-left { margin: 0; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+a.ey-link { color: #0645AD; text-decoration: underline; text-underline-offset: 2px; }
+a.ey-link:hover { text-decoration-thickness: 2px; }
+
+/* Tables */
+.ey-card { background: var(--ey-surface); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); }
+.ey-scroll { overflow-x: auto; }
+.ey-tbl { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.ey-tbl th { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.ey-tbl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.ey-tbl tr:last-child td { border-bottom: 0; }
+.ey-tbl tr.st-first td { border-top: 2px solid var(--color-fg-muted); }
+.ey-tbl .r { text-align: right; }
+.ey-tbl td.race { font-weight: 600; white-space: nowrap; }
+.ey-tbl td.o { color: var(--ey-d); }
+.ey-tbl td.g { color: var(--ey-r); }
+.ey-tbl td.muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.ey-tbl a { color: #0645AD; }
+.ey-pill { display: inline-block; font-size: var(--cds-font-size-caption); padding: 0.05rem 0.5rem; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
+.ey-pill.counting, .ey-pill.runoff { color: var(--color-warn); border-color: currentColor; }
+.ey-pill.won { color: var(--ey-d); border-color: currentColor; font-weight: 600; }
+.ey-pill.lost { color: var(--ey-r); border-color: currentColor; }
+@media (max-width: 52rem) { .ey-tbl .wide { display: none; } }
+.ey-w-ours::after, .ey-w-opp::after { font-weight: 700; margin-left: 0.35em; }
+.ey-w-ours::after { content: "\2713"; color: var(--ey-d); }
+.ey-w-opp::after { content: "\2717"; color: var(--ey-r); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.ey-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-sm); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
+.ey-fail::before { content: ""; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--color-bad); }
+</style>
+
+<div class="ey">
+
+  <div class="ey-page" id="results-page">
+    <header class="ey-sec" id="summary">
+      <div class="ey-head">
+        <h1>Engage Y'all Election Night Tracker</h1>
+        <span class="meta dash-skeleton" data-source="summary" data-field="last_update" data-row="0">–</span>
+      </div>
+      <p class="ey-take dash-skeleton" data-source="summary" data-field="headline" data-row="0">–</p>
+      <div class="ey-counts">
+        <span class="d"><b data-source="summary" data-field="leading_ours" data-row="0">–</b>we lead</span>
+        <span class="r"><b data-source="summary" data-field="leading_opp" data-row="0">–</b>GOP leads</span>
+        <span class="d"><b data-source="summary" data-field="called_ours" data-row="0">–</b>called for us</span>
+        <span class="r"><b data-source="summary" data-field="called_opp" data-row="0">–</b>called for GOP</span>
+        <span><b data-source="summary" data-field="runoff" data-row="0">–</b>to a runoff</span>
+        <span><b data-source="summary" data-field="not_started" data-row="0">–</b>no votes yet</span>
+      </div>
+    </header>
+
+    <section class="ey-sec" id="by-state">
+      <h2>Races by state</h2>
+      <div class="ey-states" id="states" data-source="races remaining"></div>
+    </section>
+
+    <section class="ey-sec" id="results">
+      <h2>Every race</h2>
+      <p>"Left to count" is the official estimate where a state or county publishes one, otherwise worked out from the share of expected vote counted. "Ours needs" is the share of the remaining two-way vote our endorsee needs to finish ahead.</p>
+      <div class="ey-card ey-scroll">
+        <table class="ey-tbl" id="results-table" data-source="races" data-row-key="race">
+          <thead><tr>
+            <th data-field="race">Race</th>
+            <th data-field="ours">Endorsee</th>
+            <th data-field="opp">Opponent</th>
+            <th class="r wide" data-field="ours_votes">Our votes</th>
+            <th class="r wide" data-field="opp_votes">Opp. votes</th>
+            <th class="r" data-field="ours_pct">Ours</th>
+            <th class="r" data-field="opp_pct">Opp.</th>
+            <th class="r" data-field="margin">Margin</th>
+            <th class="r" data-field="reporting">Counted</th>
+            <th class="r" data-source="remaining" data-field="remaining">Left to count</th>
+            <th class="r wide" data-source="remaining" data-field="needs">Ours needs</th>
+            <th data-field="status">Status</th>
+            <th class="wide" data-field="as_of">As of</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+dash.calc('remaining', {
+  inputs: ['races'],
+  title: 'Ballots left to count',
+  description: 'Uses the official remaining-ballot estimate where one is published; otherwise votes counted divided by the share of expected vote counted, minus votes counted. Ours needs is the share of the remaining two-way vote the endorsee needs to finish ahead.',
+  fn: (races) => races.map((r) => {
+    const o = Number(r.ours_votes) || 0, g = Number(r.opp_votes) || 0, x = Number(r.other_votes) || 0;
+    const counted = o + g + x;
+    const rep = r.reporting == null || r.reporting === '' ? null : Number(r.reporting);
+    let remaining = null, basis = null;
+    if (r.remaining_reported != null && r.remaining_reported !== '') { remaining = Number(r.remaining_reported); basis = 'official'; }
+    else if (rep != null && rep >= 100) { remaining = 0; basis = 'counted'; }
+    else if (counted > 0 && rep > 0) { remaining = Math.round(counted / (rep / 100) - counted); basis = 'estimate'; }
+    let needs = null;
+    if (remaining > 0 && counted > 0) needs = Math.round(((remaining + (g - o)) / (2 * remaining)) * 1000) / 10;
+    return { race: r.race, remaining, basis, needs };
+  }),
+});
+
+dash.calc('summary', {
+  inputs: ['races'],
+  title: 'Results summary',
+  description: 'Counts the races by who is ahead, who has won, and which go to a runoff, and finds the latest update time.',
+  fn: (races) => {
+    const s = { called_ours: 0, called_opp: 0, leading_ours: 0, leading_opp: 0, runoff: 0, not_started: 0, total: races.length, last_update: '' };
+    let latest = '';
+    for (const r of races) {
+      if (r.as_of && r.as_of > latest) latest = r.as_of;
+      if (r.status === 'Called') { if (r.leader === 'ours') s.called_ours++; else if (r.leader === 'opp') s.called_opp++; }
+      else if (r.status === 'Runoff') s.runoff++;
+      else if (r.leader === 'ours') s.leading_ours++;
+      else if (r.leader === 'opp') s.leading_opp++;
+      else s.not_started++;
+    }
+    const states = new Set(races.map((r) => r.state)).size;
+    s.headline = s.not_started === s.total
+      ? 'No votes counted yet. ' + s.total + ' endorsees in ' + states + ' states are on the ballot. The first polls close at 6:00 PM ET on Tuesday, 3 November (eastern Kentucky).'
+      : s.called_ours + ' of ' + s.total + ' endorsees have won and ' + s.leading_ours + ' more lead; ' + s.called_opp + ' races called for the opponent.';
+    s.last_update = latest;
+    return [s];
+  },
+});
+
+(() => {
+  const STATE_NAMES = { AR: 'Arkansas', FL: 'Florida', GA: 'Georgia', KY: 'Kentucky', LA: 'Louisiana', NC: 'North Carolina', SC: 'South Carolina', TN: 'Tennessee', TX: 'Texas', VA: 'Virginia' };
+  const LEVELS = ['Congress', 'State Senate', 'State House', 'Local'];
+  const pct = (v) => (v == null || v === '' ? '–' : Number(v).toFixed(1) + '%');
+  const num = d3.format(',');
+  const n = (v) => (v == null || v === '' ? '–' : num(Number(v)));
+  const votes = (v) => (v == null || v === '' ? '' : num(Number(v)) + ' votes');
+  const when = (iso) => {
+    if (!iso) return '–';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return 'Updated ' + d.toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' ET';
+  };
+  const shortWhen = (iso) => { if (!iso) return '–'; const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); };
+  const shortDate = (iso) => { if (!iso) return '–'; const d = new Date(iso.length === 10 ? iso + 'T12:00:00' : iso); return isNaN(d) ? iso : d.toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric' }); };
+  const state = (r) => r.status === 'Called' ? (r.leader === 'ours' ? 'won' : 'lost') : r.status === 'Runoff' ? 'runoff' : (r.status === 'Counting' || r.status === 'Too close to call' ? 'counting' : '');
+  const pillText = (r) => r.status === 'Called' && r.winner ? 'Called: ' + r.winner : r.status === 'Runoff' ? 'Top two to 12 Dec runoff' : r.status;
+  const shortStatus = (r) => r.status === 'Called' ? (r.leader === 'ours' ? 'Won' : 'Lost')
+    : r.status === 'Runoff' ? 'Runoff 12 Dec'
+    : r.status === 'Too close to call' ? 'Too close'
+    : r.status === 'Counting' ? (r.reporting != null && r.reporting !== '' ? Number(r.reporting).toFixed(0) + '% in' : 'Counting')
+    : 'Polls ' + r.polls_close_et + ' ET';
+  const winCls = (r, side) => (r.status === 'Called' && r.leader === side ? (side === 'ours' ? 'ey-w-ours' : 'ey-w-opp') : '');
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const mark = (e, field, k, src) => { e.dataset.source = src || 'races'; e.dataset.field = field; e.dataset.where = 'race=' + encodeURIComponent(k); return e; };
+  const partyTag = (p) => (p ? ' (' + p + ')' : '');
+  const leftText = (r, m) => {
+    if (!m || m.remaining == null) return null;
+    if (m.basis === 'counted') return 'All votes counted';
+    let who = '';
+    if (m.needs != null) {
+      if (r.leader === 'opp') who = m.needs > 100 ? '. Out of reach for ' + r.ours : '. ' + r.ours + ' needs ' + m.needs.toFixed(1) + '% of them';
+      else who = 100 - m.needs > 100 ? '. Out of reach for ' + r.opp : '. ' + r.opp + ' needs ' + (100 - m.needs).toFixed(1) + '% of them';
+    }
+    return 'About ' + num(m.remaining) + ' ballots left to count (' + (m.basis === 'official' ? 'official estimate' : 'estimate from expected vote') + ')' + who;
+  };
+  const bar = (r) => {
+    const b = el('div', 'ey-bar' + (r.opp_party ? '' : ' np'));
+    const o = el('span', 'o'); o.style.width = (Number(r.ours_pct) || 0) + '%';
+    const g = el('span', 'g'); g.style.width = (Number(r.opp_pct) || 0) + '%';
+    b.append(o, g); return b;
+  };
+
+  const tile = (r, m) => {
+    const t = el('article', 'ey-t');
+    t.id = 'race-' + r.race.replace(/[^A-Za-z0-9]+/g, '-');
+    const s = state(r); if (s === 'won' || s === 'lost') t.classList.add(s);
+    const r1 = el('div', 'row1');
+    r1.append(mark(el('span', 'race', r.race), 'race', r.race), el('span', 'st ' + s, shortStatus(r)));
+    t.append(r1);
+    if (r.office) t.append(mark(el('p', 'ey-note', r.office), 'office', r.race));
+    const cand = (side, name, party, p, v) => {
+      const row = el('div', 'ey-cand ' + side + (side === 'opp' && !r.opp_party ? ' np' : ''));
+      const nm = el('span', 'nm');
+      nm.append(mark(el('span', winCls(r, side) || null, name), side, r.race), el('small', null, partyTag(party)));
+      row.append(nm, mark(el('span', 'pct', pct(p)), side + '_pct', r.race), mark(el('span', 'votes', votes(v)), side + '_votes', r.race));
+      return row;
+    };
+    t.append(cand('ours', r.ours, r.ours_party, r.ours_pct, r.ours_votes), cand('opp', r.opp, r.opp_party, r.opp_pct, r.opp_votes), bar(r));
+    const lt = leftText(r, m);
+    if (lt) t.append(mark(el('p', 'ey-left', lt), 'remaining', r.race, 'remaining'));
+    const f = el('div', 'ey-foot');
+    if (r.margin != null && r.margin !== '') f.append(mark(el('span', null, 'Margin ' + d3.format('+.1f')(Number(r.margin))), 'margin', r.race));
+    if (r.reporting != null && r.reporting !== '') f.append(mark(el('span', null, Number(r.reporting).toFixed(0) + '% reporting'), 'reporting', r.race));
+    else f.append(mark(el('span', null, 'Polls close ' + r.polls_close_et + ' ET'), 'polls_close_et', r.race));
+    if (r.called_by) f.append(mark(el('span', null, 'Call: ' + r.called_by), 'called_by', r.race));
+    if (r.source_url) { const l = el('a', 'ey-link', 'Official results'); l.href = r.source_url; l.target = '_blank'; l.rel = 'noopener'; f.append(l); }
+    t.append(f);
+    if (r.others) t.append(mark(el('p', 'ey-note', 'Also on ballot: ' + r.others), 'others', r.race));
+    if (r.note) t.append(mark(el('p', 'ey-note', r.note), 'note', r.race));
+    return t;
+  };
+
+  const statesEl = document.getElementById('states');
+  const tbody = document.querySelector('#results-table tbody');
+  const sumEls = document.querySelectorAll('[data-source="summary"]');
+
+  dash.onData(() => {
+    const s = dash.data('summary');
+    sumEls.forEach((e) => {
+      if (s.status === 'ok' && s.data[0]) { e.classList.remove('dash-skeleton'); const v = s.data[0][e.dataset.field]; e.textContent = e.dataset.field === 'last_update' ? when(v) : String(v); }
+      else e.textContent = '–';
+    });
+
+    const d = dash.data('races');
+    const rm = dash.data('remaining');
+    const remBy = new Map(rm.status === 'ok' ? rm.data.map((x) => [x.race, x]) : []);
+    if (d.status !== 'ok') {
+      statesEl.replaceChildren(); tbody.replaceChildren();
+      if (d.status === 'error') statesEl.replaceChildren(el('div', 'ey-fail', 'Failed to load'));
+    } else {
+      const rows = d.data.slice().sort((a, b) => Number(a.order) - Number(b.order));
+      const codes = [...new Set(rows.map((r) => r.state))].sort();
+      statesEl.replaceChildren(...codes.map((code) => {
+        const sec = el('section', 'ey-state');
+        sec.id = 'state-' + code;
+        const srows = rows.filter((r) => r.state === code);
+        const h = el('h3', null, STATE_NAMES[code] || code);
+        h.append(el('small', null, srows.length + (srows.length === 1 ? ' race' : ' races')));
+        sec.append(h);
+        for (const lv of LEVELS) {
+          const lrows = srows.filter((r) => r.level === lv);
+          if (!lrows.length) continue;
+          sec.append(el('p', 'ey-level', lv));
+          const g = el('div', 'ey-grid');
+          g.append(...lrows.map((r) => tile(r, remBy.get(r.race))));
+          sec.append(g);
+        }
+        return sec;
+      }));
+      let prev = null;
+      tbody.replaceChildren(...rows.map((r) => {
+        const m = remBy.get(r.race);
+        const tr = el('tr');
+        if (prev !== null && r.state !== prev) tr.classList.add('st-first');
+        prev = r.state;
+        const st = el('td'); st.append(el('span', 'ey-pill ' + state(r), pillText(r)));
+        tr.append(
+          el('td', 'race', r.race),
+          el('td', winCls(r, 'ours') || null, r.ours),
+          el('td', winCls(r, 'opp') || null, r.opp + partyTag(r.opp_party)),
+          el('td', 'r wide', n(r.ours_votes)),
+          el('td', 'r wide', n(r.opp_votes)),
+          el('td', 'r o', pct(r.ours_pct)),
+          el('td', 'r g', pct(r.opp_pct)),
+          el('td', 'r', r.margin == null || r.margin === '' ? '–' : d3.format('+.1f')(Number(r.margin))),
+          el('td', 'r', r.reporting == null || r.reporting === '' ? '–' : Number(r.reporting).toFixed(0) + '%'),
+          el('td', 'r', m && m.remaining != null ? num(m.remaining) : '–'),
+          el('td', 'r wide', m && m.needs != null ? m.needs.toFixed(1) + '%' : '–'),
+          st,
+          el('td', 'wide muted', shortWhen(r.as_of)),
+        );
+        return tr;
+      }));
+    }
+  });
+
+  let jumped = false;
+  dash.onData(() => {
+    if (jumped || dash.data('races').status !== 'ok') return;
+    jumped = true;
+    const h = location.hash.slice(1);
+    const named = document.getElementById(h);
+    if (named) named.scrollIntoView();
+  });
+})();
+</script>
