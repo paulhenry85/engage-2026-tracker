@@ -370,8 +370,10 @@ dash.calc('summary', {
       const nFl = all.filter((r) => r.state === 'FL').length;
       document.getElementById('tab-florida-n').textContent = nFl + ' races';
       document.getElementById('tab-other-n').textContent = (all.length - nFl) + ' races';
-      const rows = all.filter(inTab);
-      const codes = [...new Set(rows.map((r) => r.state))].sort();
+      const FIRST = ['KY', 'TN', 'TX'];
+      const srank = (c) => { const i = FIRST.indexOf(c); return i < 0 ? FIRST.length : i; };
+      const rows = all.filter(inTab).sort((a, b) => tab === 'other' ? srank(a.state) - srank(b.state) || (srank(a.state) === FIRST.length ? String(a.state).localeCompare(String(b.state)) : 0) || Number(a.order) - Number(b.order) : 0);
+      const codes = [...new Set(rows.map((r) => r.state))].sort((a, b) => srank(a) - srank(b) || a.localeCompare(b));
       if (tab === 'florida') {
         statesEl.replaceChildren(...LEVELS.map((lv) => {
           const lrows = rows.filter((r) => r.level === lv);
