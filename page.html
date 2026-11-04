@@ -50,7 +50,7 @@
 .ey-t .st { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); white-space: nowrap; }
 .ey-t .st.counting, .ey-t .st.runoff { color: var(--color-warn); }
 .ey-t .st.won { color: #fff; background: var(--ey-d); font-weight: 700; padding: 0.05rem 0.45rem; border-radius: 3px; }
-.ey-t .st.lost { color: var(--ey-r); font-weight: 600; }
+.ey-t .st.lost { color: #fff; background: var(--ey-r); font-weight: 700; padding: 0.05rem 0.45rem; border-radius: 3px; }
 .ey-cand { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--cds-gap-sm); }
 .ey-cand .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ey-cand .nm small { color: var(--color-fg-muted); }
@@ -92,7 +92,8 @@ a.ey-link:hover { text-decoration-thickness: 2px; }
 .ey-w-ours::after, .ey-w-opp::after { font-weight: 700; margin-left: 0.35em; }
 .ey-w-ours::after { content: "\2713"; color: var(--ey-d); font-size: 1.15em; }
 .ey-pill.won { background: var(--ey-d); color: #fff !important; border-color: var(--ey-d) !important; }
-.ey-w-opp::after { content: "\2717"; color: var(--ey-r); }
+.ey-w-opp::after { content: "\2717"; color: var(--ey-r); font-size: 1.15em; }
+.ey-pill.lost { background: var(--ey-r); color: #fff !important; border-color: var(--ey-r) !important; font-weight: 600; }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 .ey-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-sm); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
@@ -214,13 +215,13 @@ dash.calc('summary', {
   const shortWhen = (iso) => { if (!iso) return '–'; const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); };
   const shortDate = (iso) => { if (!iso) return '–'; const d = new Date(iso.length === 10 ? iso + 'T12:00:00' : iso); return isNaN(d) ? iso : d.toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric' }); };
   const state = (r) => r.status === 'Called' ? (r.leader === 'ours' ? 'won' : 'lost') : r.status === 'Runoff' ? 'runoff' : (r.status === 'Counting' || r.status === 'Too close to call' ? 'counting' : '');
-  const pillText = (r) => r.status === 'Called' && r.leader === 'ours' ? '\u2713 Won' : r.status === 'Called' && r.winner ? 'Called: ' + r.winner : r.status === 'Runoff' ? 'Top two to 12 Dec runoff' : r.status;
-  const shortStatus = (r) => r.status === 'Called' ? (r.leader === 'ours' ? '\u2713 Won' : 'Lost')
+  const pillText = (r) => r.status === 'Called' && r.leader === 'ours' ? '\u2713 Won' : r.status === 'Called' ? '\u2717 Lost' + (r.winner ? ': ' + r.winner : '') : r.status === 'Runoff' ? 'Top two to 12 Dec runoff' : r.status;
+  const shortStatus = (r) => r.status === 'Called' ? (r.leader === 'ours' ? '\u2713 Won' : '\u2717 Lost')
     : r.status === 'Runoff' ? 'Runoff 12 Dec'
     : r.status === 'Too close to call' ? 'Too close'
     : r.status === 'Counting' ? (r.reporting != null && r.reporting !== '' ? Number(r.reporting).toFixed(0) + '% in' : 'Counting')
     : 'Polls ' + r.polls_close_et + ' ET';
-  const winCls = (r, side) => (r.status === 'Called' && r.leader === side ? (side === 'ours' ? 'ey-w-ours' : 'ey-w-opp') : '');
+  const winCls = (r, side) => (side === 'ours' && r.status === 'Called' ? (r.leader === 'ours' ? 'ey-w-ours' : 'ey-w-opp') : '');
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const mark = (e, field, k, src) => { e.dataset.source = src || 'races'; e.dataset.field = field; e.dataset.where = 'race=' + encodeURIComponent(k); return e; };
   const partyTag = (p) => (p ? ' (' + p + ')' : '');
